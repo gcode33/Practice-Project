@@ -1,4 +1,5 @@
-using PracticeProject.Components;
+using Microsoft.EntityFrameworkCore;
+using SimpleBookCatalog.Components;
 using SimpleBookCatalog.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddDbContextFactory<SimpleBookCatalogDbContext>()
+builder.Services.AddDbContextFactory<SimpleBookCatalogDbContext>(options => 
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SimpleBookCatalogConnection"));
+});
 
 var app = builder.Build();
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PracticeProject.Entities;
+using SimpleBookCatalog.Domain.Entities;
 
 namespace SimpleBookCatalog.Infrastructure.Context
 {

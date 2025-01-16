@@ -1,0 +1,47 @@
+﻿@page "/add-new"
+@inject IBookRepo Repository
+@inject NavigationManager Navigation
+
+<PageTitle>Add New Book</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudPaper Elevation="3" Class="pa-4">
+        <MudForm @ref="form" Model="Book" OnValidSubmit="AddBook">
+            <MudText Typo="Typo.h5" Class="mb-4">Add New Book</MudText>
+
+            <MudTextField T="string" Label="Title" @bind-Value="Book.Title" Required="true" RequiredError="Title is required!" />
+
+            <MudTextField T="string" Label="Author" @bind-Value="Book.Author" Required="true" RequiredError="Author is required!" />
+
+            <MudDatePicker Label="Date Published" @bind-Date="Book.PublicationDate" Required="true" RequiredError="Publication date is required!" />
+
+            <MudSelect T="Category" Label="Category" @bind-Value="Book.Category" Required="true" RequiredError="Category is required!">
+                <MudSelectItem Value="@((Category)0)">Select Category</MudSelectItem>
+                @foreach (var category in Enum.GetValues(typeof(Category)))
+                {
+                    <MudSelectItem Value="@((Category)category)">@category.ToString()</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" Disabled="@(!form.IsValid)">Submit</MudButton>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudForm form;
+
+    [SupplyParameterFromForm]
+    public Books Book { get; set; } = new();
+
+    private async Task AddBook()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            await Repository.AddAsync(Book);
+            Navigation.NavigateTo("/", true);
+        }
+    }
+
+}

@@ -4,20 +4,20 @@ using SimpleBookCatalogs.Components;
 using MudBlazor.Services;
 using SimpleBookCatalog.Application.Interfaces;
 using SimpleBookCatalog.Infrastructure.Repositories;
+using SimpleBookCatalog.Domain.Entities;
+using SimpleBookCatalog.Domain.Enum;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add this right after creating the builder
 builder.Configuration["ConnectionStrings:SimpleBookCatalogsConnection"] =
     "Server=(localdb)\\mssqllocaldb;Database=SimpleBookCatalogs;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=true";
+
+
 // Add these diagnostic lines
 var configuration = builder.Configuration;
-foreach (var c in configuration.GetSection("ConnectionStrings").GetChildren())
-{
-    Console.WriteLine($"Found connection string: {c.Key} = {c.Value}");
-}
-var targetConnection = configuration.GetConnectionString("SimpleBookCatalogsConnection");
-Console.WriteLine($"Target connection string: {targetConnection}");
-// Add services to the container.
+
+
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddMudServices();
@@ -30,14 +30,14 @@ builder.Services.AddDbContextFactory<SimpleBookCatalogDbContext>(options =>
     }
     Console.WriteLine($"Configuring DbContext with connection string: {connectionString}");
     options.UseSqlServer(connectionString);
-});// Add after your builder.Services.AddDbContextFactory line
-var connectionString = builder.Configuration.GetConnectionString("SimpleBookCatalogsConnection");
-Console.WriteLine($"[Startup] Using connection string: {connectionString}");
-// Add this near the top of your Program.cs, after var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddLogging(builder =>
+});
+
+
+builder.Services.AddLogging(logging =>
 {
-    builder.AddConsole();
-    builder.AddDebug();
+    logging.ClearProviders();
+    logging.AddConsole();
+    logging.SetMinimumLevel(LogLevel.Debug);
 });
 builder.Services.AddScoped<IBookRepo, BookRepo>();
 
@@ -78,6 +78,32 @@ app.MapGet("/api/test-db", async (IDbContextFactory<SimpleBookCatalogDbContext> 
     {
         logger.LogError(ex, "Error testing database connection");
         return Results.Problem($"Database connection test failed with error: {ex.Message}");
+    }
+});
+
+
+app.MapGet("/api/test-book-add", async (IDbContextFactory<SimpleBookCatalogDbContext> contextFactory) =>
+{
+    try
+    {
+        using var context = await contextFactory.CreateDbContextAsync();
+
+        var testBook = new Books
+        {
+            Title = "Test Book",
+            Author = "Test Author",
+            PublicationDate = DateTime.Now,
+            Category = Category.Science
+        };
+
+        context.Books.Add(testBook);
+        var result = await context.SaveChangesAsync();
+
+        return Results.Ok(new { Message = "Test book added", AffectedRows = result });
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Error adding test book: {ex.Message}");
     }
 });
 app.Run();

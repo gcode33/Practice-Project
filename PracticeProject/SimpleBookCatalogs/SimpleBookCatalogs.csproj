@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>b1b43e5a-82d2-40b7-a404-e338358b20b7</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleBookCatalog.Application\SimpleBookCatalog.Application.csproj" />
+    <ProjectReference Include="..\SimpleBookCatalog.Domain\SimpleBookCatalog.Domain.csproj" />
+    <ProjectReference Include="..\SimpleBookCatalog.Infrastructure\SimpleBookCatalog.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,161 @@
+﻿@page "/add-new"
+@* Dependency injections for required services *@
+@inject IBookRepo Repository
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject ILogger<AddNew> Logger
+
+<PageTitle>Add New Book</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudPaper Elevation="3" Class="pa-4">
+        @* MudForm handles form state and validation *@
+        <MudForm @ref="form" Model="Book">
+            <MudText Typo="Typo.h5" Class="mb-4">Add New Book</MudText>
+
+            @* Title Input Field
+                - Immediate="true" ensures immediate validation and update
+                - @onchange triggers our debug logging method *@
+            <MudTextField T="string" 
+                         Label="Title" 
+                         @bind-Value="Book.Title" 
+                         Required="true" 
+                         RequiredError="Title is required!"
+                         Immediate="true"
+                         @onchange="DebugValueChange" />
+
+            @* Author Input Field *@
+            <MudTextField T="string" 
+                         Label="Author" 
+                         @bind-Value="Book.Author" 
+                         Required="true" 
+                         RequiredError="Author is required!"
+                         Immediate="true"
+                         @onchange="DebugValueChange" />
+
+            @* Publication Date Picker *@
+            <MudDatePicker Label="Date Published" 
+                          @bind-Date="Book.PublicationDate" 
+                          Required="true" 
+                          RequiredError="Publication date is required!"
+                          @onchange="DebugValueChange" />
+
+            @* Category Dropdown
+                - Populates options from Category enum
+                - Requires selection *@
+            <MudSelect T="Category" 
+                      Label="Category" 
+                      @bind-Value="Book.Category" 
+                      Required="true" 
+                      RequiredError="Category is required!"
+                      @onchange="DebugValueChange">
+                @foreach (var category in Enum.GetValues(typeof(Category)))
+                {
+                    <MudSelectItem Value="@((Category)category)">@category.ToString()</MudSelectItem>
+                }
+            </MudSelect>
+
+            @* Submit Button - Calls HandleSubmit method on click *@
+            <MudButton OnClick="HandleSubmit" 
+                      Variant="Variant.Filled" 
+                      Color="Color.Primary" 
+                      Class="mt-4">Submit</MudButton>
+        </MudForm>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    // Form reference for accessing form state and validation
+    private MudForm form;
+    // Track processing state to prevent multiple submissions
+    private bool isProcessing = false;
+    // Store debug logs for component lifecycle
+    private string debugLog = "";
+
+    // Book model bound to the form
+    [SupplyParameterFromForm]
+    public Books Book { get; set; } = new();
+
+    /// Initializes the component and sets default values
+    /// Called when the component is first created
+
+    protected override void OnInitialized()
+    {
+        Book = new Books
+        {
+            PublicationDate = DateTime.Now // Set default date
+        };
+        Console.WriteLine("Component initialized with new Book instance");
+    }
+
+
+    /// Debug method to track form field value changes
+    /// Called whenever a form field value changes
+    private void DebugValueChange(object value)
+    {
+        Console.WriteLine($"Value changed: {value}");
+        debugLog += $"Value changed: {value}\n";
+        // Notify the component that its state has changed
+        StateHasChanged();
+    }
+
+
+    /// Handles form submission
+    /// Validates input and saves the book to the database
+
+    private async Task HandleSubmit()
+    {
+        Console.WriteLine("Submit button clicked");
+        Console.WriteLine($"Current Book state: Title={Book.Title}, Author={Book.Author}, Date={Book.PublicationDate}, Category={Book.Category}");
+
+        try
+        {
+            // Set processing flag to prevent multiple submissions
+            isProcessing = true;
+            StateHasChanged();
+
+            // Validate required fields
+            if (Book == null)
+            {
+                throw new InvalidOperationException("Book object is null");
+            }
+
+            if (string.IsNullOrWhiteSpace(Book.Title))
+            {
+                throw new InvalidOperationException("Book title is required");
+            }
+
+            if (string.IsNullOrWhiteSpace(Book.Author))
+            {
+                throw new InvalidOperationException("Book author is required");
+            }
+
+            if (!Book.PublicationDate.HasValue)
+            {
+                throw new InvalidOperationException("Publication date is required");
+            }
+
+            // Attempt to save the book
+            Console.WriteLine("Validation passed, attempting to save");
+            await Repository.AddAsync(Book);
+            Console.WriteLine("Book saved successfully");
+
+            // Show success message and navigate back to home page
+            Snackbar.Add("Book added successfully!", Severity.Success);
+            Navigation.NavigateTo("/", true);
+        }
+        catch (Exception ex)
+        {
+            // Log any errors that occur during submission
+            Console.WriteLine($"Error in HandleSubmit: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            // Reset processing flag and update UI
+            isProcessing = false;
+            StateHasChanged();
+        }
+    }
+}

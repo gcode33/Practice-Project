@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBookCatalog.Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBookCatalog.Domain", "SimpleBookCatalog.Domain\SimpleBookCatalog.Domain.csproj", "{771CB4AF-BEEB-488F-8C9B-7278546FE80C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBookCatalog", "SimpleBookCatalog\SimpleBookCatalog.csproj", "{EDA1C9AC-1564-4AF8-863B-0C6381D715AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBookCatalogs", "SimpleBookCatalogs\SimpleBookCatalogs.csproj", "{0D3B73A8-039B-4A55-8607-02E4B6EFA5F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{771CB4AF-BEEB-488F-8C9B-7278546FE80C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{771CB4AF-BEEB-488F-8C9B-7278546FE80C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{771CB4AF-BEEB-488F-8C9B-7278546FE80C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EDA1C9AC-1564-4AF8-863B-0C6381D715AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDA1C9AC-1564-4AF8-863B-0C6381D715AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDA1C9AC-1564-4AF8-863B-0C6381D715AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDA1C9AC-1564-4AF8-863B-0C6381D715AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D3B73A8-039B-4A55-8607-02E4B6EFA5F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D3B73A8-039B-4A55-8607-02E4B6EFA5F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D3B73A8-039B-4A55-8607-02E4B6EFA5F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D3B73A8-039B-4A55-8607-02E4B6EFA5F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
